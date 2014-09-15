@@ -1,23 +1,29 @@
 import org.gicentre.utils.stat.*;
 import controlP5.*;
-
+import org.gicentre.utils.colour.*;
 ControlP5 cp5;
 DropdownList statePicker;
 BarChart stateBarChart;
+Textlabel stateLabel;
+ColourTable colors = ColourTable.getPresetColourTable(ColourTable.SET1_9,0,10);
+
 
 int cnt = 0;
 JSONArray data;
 
 void setup() {
-  
   smooth();
   size(1000,500);
   cp5 = new ControlP5(this);
   statePicker = cp5.addDropdownList("myList-d1")
                    .setPosition(100, 100)
                    ;
-  
-
+                   
+   stateLabel = cp5.addTextlabel("stateLabel")
+                    .setText("A single ControlP5 textlabel, in yellow.")
+                    .setPosition(100,3)
+                    .setColorValue(0xFF)
+                    ;
 
   data = loadJSONArray("CommuterData.json");
   customize(statePicker, data);
@@ -115,10 +121,15 @@ void createChart(float index) {
 }
 
 void highlightStateBar(PVector bar) {
-  //set color
-  
-  
+
+  float[] barColors = {0, 1, 2, 3, 4, 6};
+  float[] f = bar.array();
+  barColors[(int) f[0]] = 5;
+  stateBarChart.setBarColour(barColors, colors);
+   
   //display label
+  float[] data = stateBarChart.getData();
+  stateLabel.setText((int) data[(int)f[0]] + " people");
   
   
 }
