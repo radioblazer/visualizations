@@ -20,7 +20,7 @@ void setup() {
                    ;
                    
    stateLabel = cp5.addTextlabel("stateLabel")
-                    .setText("A single ControlP5 textlabel, in yellow.")
+                    .setText("")
                     .setPosition(100,3)
                     .setColorValue(0xFF)
                     ;
@@ -107,6 +107,7 @@ void createChart(float index) {
   
   stateBarChart = new BarChart(this);
   stateBarChart.setData(chartData);
+
      
   // Scaling
   stateBarChart.setMinValue(0);
@@ -118,6 +119,11 @@ void createChart(float index) {
   stateBarChart.setBarLabels(new String[] {"Drove alone","Carpooled","Public transit",
                                            "Walked","Other", "Worked at home"});
   stateBarChart.showCategoryAxis(true);
+  
+  float[] barColors = {0, 1, 2, 3, 4, 6};
+  stateBarChart.setBarColour(barColors, colors);
+
+
 }
 
 void highlightStateBar(PVector bar) {
