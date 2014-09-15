@@ -3,7 +3,7 @@ import controlP5.*;
 
 ControlP5 cp5;
 DropdownList statePicker;
-BarChart barChart;
+BarChart stateBarChart;
 
 int cnt = 0;
 JSONArray data;
@@ -48,7 +48,7 @@ JSONArray getData() {
 void draw()
 {
   background(255);
-  barChart.draw(15,15,470,470); 
+  stateBarChart.draw(15,15,470,470); 
 }
 
 void customize(DropdownList ddl, JSONArray data) {
@@ -89,8 +89,6 @@ void controlEvent(ControlEvent theEvent) {
 }
 
 void createChart(float index) {
-  
-
   data = getData();
   JSONObject c = data.getJSONObject((int) index);
   float[] chartData = {c.getInt("Drove Alone"), 
@@ -101,22 +99,34 @@ void createChart(float index) {
                      c.getInt("Worked at home")};
  
   
-  barChart = new BarChart(this);
-  barChart.setData(chartData);
+  stateBarChart = new BarChart(this);
+  stateBarChart.setData(chartData);
      
   // Scaling
-  barChart.setMinValue(0);
-  barChart.setMaxValue(c.getInt("Total Workers"));
+  stateBarChart.setMinValue(0);
+  stateBarChart.setMaxValue(c.getInt("Total Workers"));
    
   // Axis appearance
   textFont(createFont("Helvetica",10),10);   
-  barChart.showValueAxis(true);
-  barChart.setBarLabels(new String[] {"Drove alone","Carpooled","Public transit",
-                                       "Walked","Other", "Worked at home"});
-  barChart.showCategoryAxis(true);
+  stateBarChart.showValueAxis(true);
+  stateBarChart.setBarLabels(new String[] {"Drove alone","Carpooled","Public transit",
+                                           "Walked","Other", "Worked at home"});
+  stateBarChart.showCategoryAxis(true);
+}
+
+void highlightStateBar(PVector bar) {
+  //set color
+  
+  
+  //display label
+  
+  
 }
 
 void mouseMoved() {
-  Array selectedState = barChart.getScreenToData(new PVector(mouseX, mouseY)));
+  PVector result = stateBarChart.getScreenToData(new PVector(mouseX, mouseY));
+  if (result != null) {
+    highlightStateBar(result);
+  }
 } 
 
