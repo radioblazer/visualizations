@@ -6,8 +6,6 @@ DropdownList statePicker;
 BarChart stateBarChart;
 Textlabel stateLabel;
 ColourTable colors = ColourTable.getPresetColourTable(ColourTable.SET1_9,0,10);
-
-
 int cnt = 0;
 JSONArray data;
 
@@ -145,5 +143,22 @@ void mouseMoved() {
   if (result != null) {
     highlightStateBar(result);
   }
-} 
+}
+
+int[] findTopThree(String category, int min, int max) {
+  data = getData();
+  int a = 0, b = 0, c = 0;
+  for (int i = 1; i < data.size(); i++) {     
+    JSONObject o = data.getJSONObject(i);
+    cur = o.getInt(category);
+    if (min <= cur) && max >= cur) {
+
+    }
+    println(o.getString("State"));
+  }
+  int[] result = {a, b, c};
+  return result;
+    
+  
+}
 
