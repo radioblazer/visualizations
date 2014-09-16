@@ -1,8 +1,13 @@
+// Created by Matt Townsend and Rahul Singh
+
 import org.gicentre.utils.stat.*;
 import controlP5.*;
 import org.gicentre.utils.colour.*;
 ControlP5 cp5;
 DropdownList statePicker;
+Textfield min;
+Textfield max;
+Range range;
 
 BarChart stateBarChart, 
 droveBarChart, 
@@ -13,9 +18,22 @@ otherBarChart,
 homeBarChart;
 
 Textlabel stateLabel;
+
+Textlabel title;
+Textlabel drove;
+Textlabel carpool;
+Textlabel publiclabel;
+Textlabel walked;
+Textlabel other;
+Textlabel home;
+
+
+
 ColourTable colors = ColourTable.getPresetColourTable(ColourTable.SET1_9, 0, 10);
 int cnt = 0;
 JSONArray data;
+
+
 
 
 void setup() {
@@ -31,6 +49,63 @@ void setup() {
       .setPosition(100, 3)
         .setColorValue(0xFF)
           ;
+          
+
+  title = cp5.addTextlabel("title")
+    .setText("Commuting types by state")
+    .setPosition(230, 50)
+    .setColorValue(0xFF)
+    ;
+
+  
+  drove = cp5.addTextlabel("drove")
+    .setText("Drove Alone")
+    .setPosition(500, 90)
+    .setColorValue(0xFF)
+     ;
+     
+  carpool = cp5.addTextlabel("carpool")
+    .setText("Carpooled")
+    .setPosition(700, 90)
+    .setColorValue(0xFF)
+     ;
+     
+  publiclabel = cp5.addTextlabel("publiclable")
+    .setText("Public Transit")
+    .setPosition(900, 90)
+    .setColorValue(0xFF)
+     ;
+     
+  walked = cp5.addTextlabel("walked")
+    .setText("Walked")
+    .setPosition(507, 310)
+    .setColorValue(0xFF)
+     ;
+     
+  other = cp5.addTextlabel("other")
+    .setText("Other")
+    .setPosition(707, 310)
+    .setColorValue(0xFF)
+     ;
+   home = cp5.addTextlabel("home")
+    .setText("Worked from home")
+    .setPosition(907, 310)
+    .setColorValue(0xFF)
+     ;
+     
+     
+   range = cp5.addRange("rangeController")
+       // disable broadcasting since setRange and setRangeValues will trigger an event
+       .setBroadcast(false) 
+       .setPosition(200,0)
+       .setSize(400,20)
+       .setHandleSize(20)
+       .setRange(0,15000000)
+       .setRangeValues(0,15000000)
+       // after the initialization we turn broadcast back on again
+       .setBroadcast(true)
+       ;
+  noStroke();             
 
   data = loadJSONArray("CommuterData.json");
   customize(statePicker, data);
@@ -94,11 +169,15 @@ void controlEvent(ControlEvent theEvent) {
 
   if (theEvent.isGroup()) {
     // check if the Event was triggered from a ControlGroup
-    println("event from group : "+theEvent.getGroup().getValue()+" from "+theEvent.getGroup());
     createChart(theEvent.getGroup().getValue());
     draw();
   } else if (theEvent.isController()) {
-    println("event from controller : "+theEvent.getController().getValue()+" from "+theEvent.getController());
+  }
+  if(theEvent.isFrom("rangeController")) {
+    int min = int(theEvent.getController().getArrayValue(0));
+    int max = int(theEvent.getController().getArrayValue(1));
+    createSubCharts(min, max, false);
+
   }
 }
 
@@ -161,18 +240,12 @@ void createSubCharts(int min, int max, boolean percent) {
   chartSetup(walkedBarChart, walkedResults, 3, 300, 300);
   chartSetup(otherBarChart, otherResults, 4, 300, 300);
   chartSetup(homeBarChart, workedResults, 6, 300, 300);
-  
-  // get number of people in that category for each of those states
-  // display data/legend in either ints or percent
 }
 
 void chartSetup(BarChart b, String[] chartData, int c, int x, int y) {
-  println(chartData);
   float[] values = {float(chartData[3]), 
                    float(chartData[4]),
                    float(chartData[5])};
-  println("hello");
-  println(values);
   b.setData(values);
   // Scaling
   b.setMinValue(0);
@@ -190,50 +263,51 @@ void chartSetup(BarChart b, String[] chartData, int c, int x, int y) {
 
 }
 
-void highlightStateBar(BarChart b, PVector bar, int i) {
+void highlightStateBar(BarChart b, PVector bar) {
   float[] barColors = {
     0, 1, 2, 3, 4, 6
   };
   float[] f = bar.array();
   barColors[(int) f[0]] = 5;
   b.setBarColour(barColors, colors);
+  displayLabel(b, f);
+}
 
-  //display label
+void displayLabel(BarChart b, float[] f) {
   float[] data = b.getData();
   stateLabel.setText((int) data[(int)f[0]] + " people");
 }
-
 void mouseMoved() {
   PVector result = stateBarChart.getScreenToData(new PVector(mouseX, mouseY));
-  //PVector droveResult = droveBarChart.getScreenToData(new PVector(mouseX, mouseY));
-  //PVector carpoolBarChart = carpoolBarChart.getScreenToData(new PVector(mouseX, mouseY));
-  //PVector publicBarChart = publicBarChart.getScreenToData(new PVector(mouseX, mouseY));
-  //PVector walkedBarChart = walkedBarChart.getScreenToData(new PVector(mouseX, mouseY));
-  //PVector otherBarChart = otherBarChart.getScreenToData(new PVector(mouseX, mouseY));
-  //PVector homeBarChart = homeBarChart.getScreenToData(new PVector(mouseX, mouseY));
+  PVector droveVector = droveBarChart.getScreenToData(new PVector(mouseX, mouseY));
+  PVector carpoolVector = carpoolBarChart.getScreenToData(new PVector(mouseX, mouseY));
+  PVector publicVector = publicBarChart.getScreenToData(new PVector(mouseX, mouseY));
+  PVector walkedVector = walkedBarChart.getScreenToData(new PVector(mouseX, mouseY));
+  PVector otherVector = otherBarChart.getScreenToData(new PVector(mouseX, mouseY));
+  PVector homeVector = homeBarChart.getScreenToData(new PVector(mouseX, mouseY));
+  
 
   if (result != null) {
-    highlightStateBar(stateBarChart, result, 6);
-    highlightStateBar(droveBarChart, result, 3);
+    highlightStateBar(stateBarChart, result);
   }
-//  if (result != null) {
-//    highlightStateBar(droveBarChart, result);
-//  }
-//  if (result != null) {
-//    highlightStateBar(carpoolBarChart, result);
-//  } 
-//  if (result != null) {
-//    highlightStateBar(publicBarChart, result);
-//  }
-//  if (result != null) {
-//    highlightStateBar(walkedBarChart, result);
-//  }
-//  if (result != null) {
-//    highlightStateBar(otherBarChart, result);
-//  }
-//  if (result != null) {
-//    highlightStateBar(homeBarChart, result);
-//  }
+  if (droveVector != null) {
+    displayLabel(droveBarChart, droveVector.array());
+  }
+  if (carpoolVector != null) {
+    displayLabel(carpoolBarChart, carpoolVector.array());
+  }
+  if (publicVector != null) {
+    displayLabel(publicBarChart, publicVector.array());
+  }
+  if (walkedVector != null) {
+    displayLabel(walkedBarChart, walkedVector.array());
+  }
+  if (otherVector != null) {
+    displayLabel(otherBarChart, otherVector.array());
+  }
+  if (homeVector != null) {
+    displayLabel(homeBarChart, homeVector.array());
+  }  
 }
 
 String[] findTopThree(String category, int min, int max) {
