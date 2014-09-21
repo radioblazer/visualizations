@@ -13,7 +13,7 @@ BarChart stateBarChart,
 droveBarChart, 
 carpoolBarChart, 
 publicBarChart, 
-walkedBarChart, 
+walkedBarChart,
 otherBarChart, 
 homeBarChart;
 
