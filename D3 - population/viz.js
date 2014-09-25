@@ -1,24 +1,30 @@
 
-function displayData() {
+function displayData(year) {
+    console.log(year);
+    year = parseInt(year);
+    console.log(year);
     var series1 = [];
     var series2 = [];
 
     var year;
-    d3.json("1850.json", function(data) {
+    d3.json("data.json", function(data) {
         console.log(data);
         console.log(data.length);
         console.log(data[0]);
 
-        for(var i = data[0].values.length - 1; i >= 0; i--) {
-            series1.push({
-                x:data[0].values[i].age, y:data[0].values[i].people
-            });
+        for(var i = data.length-1; i >= 0; i--) {
+            if (data[i].year === year && data[i].sex === 1) {
+                series1.push({
+                    x:data[i].age, y:data[i].people
+                });  
+            } 
+            else if (data[i].year === year && data[i].sex === 2)  {
+                series2.push({
+                    x:data[i].age, y: -Math.abs(data[i].people)
+                }); 
+            }
         }
-        for(var i = data[1].values.length - 1; i >= 0; i--) {
-            series2.push({
-                x:data[1].values[i].age, y:data[1].values[i].people
-            });
-        }
+
         var output = [
             {
                 key: "Males",
@@ -26,12 +32,14 @@ function displayData() {
             },
             {
                 key: "Females",
-                values:series2
+                values: series2
             }
         ];
-        console.log(output);
+        
         renderChart(output);
+        $('#centerLabel').text(year);
     });
+
 }
 
 function renderChart(data) {
@@ -56,14 +64,19 @@ function renderChart(data) {
             .datum(data)
             .transition().duration(500).call(chart);
 
-        // nv.utils.windowResize(
-        //         function() {
-        //             chart.update();
-        //         }
-        //     );
+         nv.utils.windowResize(
+                 function() {
+                     chart.update();
+                 }
+             );
 
         return chart;
     });
 }
+$(document).ready(function() {
+        $('.btn-default').click(function() {
+            displayData($(this).attr("value"));
+        });
+});
 
-displayData();
+displayData(1850);
