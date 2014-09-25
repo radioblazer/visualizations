@@ -2,52 +2,26 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <script src="d3.v3.min.js"/>
-        <script src="nv.d3.min.js"/>
+        <title>Population charse</title>
+        <link href="nv.d3.css" rel="stylesheet" type="text/css">
+        <script src="d3.v3.js"></script>
+        <script src="nv.d3.js"></script>
+        <style>
+        #rightChart {
+          float:right;
+
+        }
+                #leftChart {
+          float:left;
+          
+        }
+
+        </style>
+
     </head>
     <body>
-        <svg id="chart" style="width:500; height:500;"></svg> 
+        <svg id="rightChart" style='height:600px; width:50%'/>
+        <svg id="leftChart" style='height:600px;width:50%'/>
+        <script src="viz.js"></script>
     </body>
-    
-    <script type="text/javascript">
-        
-  	d3.csv("fun.csv", function(error, data){
-  		console.log(data)
-  		// create an empty object that nv is expecting
-      var exampleData = [
-      	{
-      		key: "totals",
-      		values: []
-      	}
-      ];
-          // populate the empty object with your data
-      data.forEach(function (d){
-      	d.value = +d.value
-      	exampleData[0].values.push(d)
-      })       
-
-   	nv.addGraph(function() {
-  	
-     		var chart = nv.models.discreteBarChart()
-         		.x(function (d) { console.log(d); 
-                               return d.label                               })
-         		.y(function (d) { return d.value })
-         		.staggerLabels(true)
-         		.tooltips(false)
-         		.showValues(true)
-   
-   	  	d3.select('#chart')
-      			.datum(exampleData)
-      			.attr("id", function (d) { console.log(d); })
-      		.transition().duration(500)
-         			.call(chart);
-        console.log(exampleData);
-
-     		nv.utils.windowResize(chart.update);
-     		return chart;
-   	});
-
-   });
-          
-    </script>
 </html>
