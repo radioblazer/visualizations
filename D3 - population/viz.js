@@ -1,39 +1,50 @@
 
-function loadChart(year, gender) {
-    var series = [];
-    var year;
-    d3.json("1850_male.json", function(data) {
+function displayData() {
+    var series1 = [];
+    var series2 = [];
 
-        for(var i = data.length -1 ; i >= 0; i--) {
-            series.push({
-                x:data[i].age, y:data[i].people
+    var year;
+    d3.json("1850.json", function(data) {
+        console.log(data);
+        console.log(data.length);
+        console.log(data[0]);
+
+        for(var i = data[0].values.length - 1; i >= 0; i--) {
+            series1.push({
+                x:data[0].values[i].age, y:data[0].values[i].people
             });
         }
-        year = "1850";
+        for(var i = data[1].values.length - 1; i >= 0; i--) {
+            series2.push({
+                x:data[1].values[i].age, y:data[1].values[i].people
+            });
+        }
         var output = [
             {
-                key: year,
-                values: series
+                key: "Males",
+                values: series1
+            },
+            {
+                key: "Females",
+                values:series2
             }
         ];
-        renderRightChart(output);
-        renderLeftChart(output);
-
-
+        console.log(output);
+        renderChart(output);
     });
 }
 
-function renderRightChart(data) {
+function renderChart(data) {
     nv.addGraph(function() {
         var chart = nv.models.multiBarHorizontalChart()
         .showLegend(false)
         .showControls(false)
+        .stacked(true)
         .margin({top: 40, right: 40, bottom: 40, left: 40})
-
         ;
 
         chart.yAxis
-            .axisLabel("Female population")
+            .axisLabel("# of people")
             .tickFormat(d3.format("d"))
             ;
 
@@ -41,7 +52,7 @@ function renderRightChart(data) {
         //    .axisLabel("X-axis Label")
         //    ;
 
-        d3.select("#rightChart")
+        d3.select("#chart svg")
             .datum(data)
             .transition().duration(500).call(chart);
 
@@ -55,36 +66,4 @@ function renderRightChart(data) {
     });
 }
 
-function renderLeftChart(data) {
-    nv.addGraph(function() {
-        var chart = nv.models.multiBarHorizontalChart()
-        .showLegend(false)
-        .showControls(false)
-        .margin({top: 40, right: 40, bottom: 40, left: 40})
-
-        ;
-
-        chart.yAxis
-            .axisLabel("Male population")
-            .tickFormat(d3.format("d"))
-            ;
-
-        // chart.xAxis
-        //    .axisLabel("X-axis Label")
-        //    ;
-
-        d3.select("#leftChart")
-            .datum(data)
-            .transition().duration(500).call(chart);
-
-        // nv.utils.windowResize(
-        //         function() {
-        //             chart.update();
-        //         }
-        //     );
-
-        return chart;
-    });
-}
-
-loadChart();
+displayData();

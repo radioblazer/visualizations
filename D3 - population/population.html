@@ -2,26 +2,28 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Population charse</title>
+        <title>Population Pyramid</title>
         <link href="nv.d3.css" rel="stylesheet" type="text/css">
         <script src="d3.v3.js"></script>
         <script src="nv.d3.js"></script>
         <style>
-        #rightChart {
-          float:right;
-
-        }
-                #leftChart {
-          float:left;
-          
-        }
-
+          body {
+            overflow-y:scroll;
+          }
+          #chart svg {
+            height: 500px;
+          }
+          #chart {
+              margin: 10px;
+              min-width: 100px;
+              min-height: 100px;
+          }
         </style>
-
     </head>
     <body>
-        <svg id="rightChart" style='height:600px; width:50%'/>
-        <svg id="leftChart" style='height:600px;width:50%'/>
+      <div id="chart" class='with-3d-shadow with-transitions'>
+        <svg></svg>
+      </div>
         <script src="viz.js"></script>
     </body>
 </html>
